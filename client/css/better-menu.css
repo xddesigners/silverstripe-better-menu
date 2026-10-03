@@ -51,9 +51,9 @@
     display: none;
 }
 
-/* Group children block: a subtle shaded band so the group reads as one unit. */
+/* Group children block: a subtle blue-tinted band so the group reads as one unit. */
 .cms-menu__list .cms-menu__group-items {
-    background: rgba(0, 0, 0, 0.045);
+    background: rgba(0, 90, 147, 0.05);
 }
 
 /* Group children: a compact, tightly-aligned nested list — indented, smaller icons sitting
@@ -62,15 +62,14 @@
     display: flex !important;
     align-items: center;
     gap: 0.5em;
-    padding: 6px 16px 6px 24px !important;
+    padding: 6px 16px 6px 20px !important;
     min-height: 0 !important;
 }
 
-/* Active child: highlight + brand-blue left accent. */
+/* Active child: a very subtle blue tint + brand-blue left accent (no bold). */
 .cms-menu__list .cms-menu__group-items > li.current > a {
-    background: rgba(0, 0, 0, 0.07) !important;
+    background: rgba(0, 90, 147, 0.1) !important;
     box-shadow: inset 3px 0 0 var(--bt-group-accent, #005a93);
-    font-weight: 600;
 }
 
 .cms-menu__list .cms-menu__group-items > li > a .menu__icon[class*="fa-"] {
