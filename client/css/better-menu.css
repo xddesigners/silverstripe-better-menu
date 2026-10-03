@@ -51,9 +51,28 @@
     display: none;
 }
 
-/* Indent the group's children so they read as nested. */
-.cms-menu__list .cms-menu__group-items li a {
-    padding-left: 3.2rem;
+/* Group children: a compact, tightly-aligned nested list — indented, smaller icons sitting
+   right next to the title (overrides the native absolute-icon + title-margin layout). */
+.cms-menu__list .cms-menu__group-items > li > a {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5em;
+    padding: 6px 16px 6px 30px !important;
+    min-height: 0 !important;
+}
+
+.cms-menu__list .cms-menu__group-items > li > a .menu__icon[class*="fa-"] {
+    position: static !important;
+    display: inline-flex !important;
+    width: 1.1em !important;
+    height: auto !important;
+    margin: 0 !important;
+    font-size: 13px !important;
+}
+
+.cms-menu__list .cms-menu__group-items > li > a .text {
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Collapsed (icon-only) sidebar: reveal children on hover of the group. */
