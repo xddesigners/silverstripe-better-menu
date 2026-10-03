@@ -6,6 +6,8 @@ Settings, and any `ModelAdmin`) with nicer ones from **Font Awesome** — config
 Out of the box it loads Font Awesome Free and applies a curated set of icons to the core CMS
 sections. Everything is overridable, and Font Awesome can be disabled or swapped for your Pro kit.
 
+![The CMS left menu with Font Awesome section icons](docs/images/menu.png)
+
 ## Requirements
 
 - Silverstripe Framework **6** / Admin **3**
