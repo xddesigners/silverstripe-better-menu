@@ -47,8 +47,8 @@ class LeftAndMainExtension extends Extension
         Requirements::customCSS(
             '.cms-menu__list li .menu__icon[class*="fa-"]{'
             . 'top:0!important;bottom:0!important;height:auto!important;margin-top:0!important;'
-            . 'width:1.25em!important;text-align:center!important;'
-            . 'display:flex!important;align-items:center!important;justify-content:center!important;}',
+            . 'width:1.25em!important;font-size:16px!important;text-align:left!important;'
+            . 'display:flex!important;align-items:center!important;justify-content:flex-start!important;}',
             'better-icons-align'
         );
     }
