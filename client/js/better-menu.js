@@ -1,9 +1,12 @@
 /**
  * Better Menu — collapsible groups for the CMS left menu.
  *
- * Clicking a group's chevron toggles it open/closed (the header link still navigates), the
- * open/closed state persists per group in localStorage, and it re-applies after the admin's
- * PJAX re-renders (MutationObserver). Dependency-free (no jQuery/entwine).
+ * A group auto-expands when the active section is inside it and auto-collapses when you
+ * navigate to an item outside it. That state is driven entirely by the server render: the
+ * template emits `bt-open` only on the active group, and the admin replaces the whole menu
+ * on each PJAX navigation, so leaving a group drops its `bt-open`. The chevron toggles the
+ * current view by hand (ephemeral — it resets on the next navigation). We only (re-)attach
+ * the toggle handler to fresh menu nodes (MutationObserver). Dependency-free.
  */
 (function () {
     function initGroups() {
@@ -15,31 +18,18 @@
             }
             li.dataset.btGroupInit = '1';
 
-            var key = 'btCmsGroup_' + (li.id || i);
-            try {
-                var saved = localStorage.getItem(key);
-                if (saved === 'open') {
-                    li.classList.add('bt-open');
-                } else if (saved === 'closed') {
-                    li.classList.remove('bt-open');
-                }
-            } catch (e) { /* storage unavailable */ }
-
             var toggle = li.querySelector(':scope > .cms-menu__group-toggle');
             if (!toggle) {
                 continue;
             }
 
-            (function (li, key, toggle) {
+            (function (li, toggle) {
                 toggle.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    var open = li.classList.toggle('bt-open');
-                    try {
-                        localStorage.setItem(key, open ? 'open' : 'closed');
-                    } catch (e) { /* ignore */ }
+                    li.classList.toggle('bt-open');
                 });
-            })(li, key, toggle);
+            })(li, toggle);
         }
     }
 
