@@ -83,6 +83,16 @@
     background: rgb(216, 228, 235) !important;
 }
 
+/* Active child row gets the same left accent bar the native active items (.opened) have. Trim
+   the row's left padding by the border width so the icon/text stay aligned with the siblings. */
+.cms-menu__list .cms-menu__group-items > li.current {
+    border-left: 3px solid rgb(73, 119, 146) !important;
+}
+
+.cms-menu__list .cms-menu__group-items > li.current > a {
+    padding-left: 17px !important;
+}
+
 /* Keep the group header looking deselected even when a child is active — the group still opens,
    but the active state should read on the child row, not the header. Only when not hovered, so
    the native hover highlight still works. (The native active left-accent bar is kept.) */
