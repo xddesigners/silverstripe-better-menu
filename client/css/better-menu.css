@@ -77,6 +77,12 @@
     background: rgba(0, 90, 147, 0.16) !important;
 }
 
+/* Keep the group header looking deselected even when a child is active — the group still opens,
+   but the active state should read on the child row, not the header. */
+.cms-menu__list li.cms-menu__group.current > a {
+    background: rgb(233, 240, 244) !important;
+}
+
 .cms-menu__list .cms-menu__group-items > li > a .menu__icon[class*="fa-"] {
     position: static !important;
     display: inline-flex !important;
