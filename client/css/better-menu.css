@@ -59,16 +59,16 @@
 }
 
 /* Group children: a compact, tightly-aligned nested list — indented, smaller icons sitting
-   right next to the title (overrides the native absolute-icon + title-margin layout). The
-   default row colour is a light blue, midway between the standard menu colour and the selected
-   row, so the group reads as a distinct nested block. */
+   right next to the title (overrides the native absolute-icon + title-margin layout). Default
+   rows use the same background as the normal menu items; the group is set apart by the indent,
+   smaller icons and the top/bottom divider lines. */
 .cms-menu__list .cms-menu__group-items > li > a {
     display: flex !important;
     align-items: center;
     gap: 0.5em;
     padding: 6px 16px 6px 20px !important;
     min-height: 0 !important;
-    background: rgba(0, 90, 147, 0.08) !important;
+    background: transparent !important;
     box-shadow: none !important; /* drop the native inset edge line */
 }
 
