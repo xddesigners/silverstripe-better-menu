@@ -68,13 +68,13 @@
     gap: 0.5em;
     padding: 6px 16px 6px 20px !important;
     min-height: 0 !important;
-    background: transparent !important;
     box-shadow: none !important; /* drop the native inset edge line */
 }
 
-/* Active child: stronger blue fill. */
-.cms-menu__list .cms-menu__group-items > li.current > a {
-    background: rgba(0, 90, 147, 0.16) !important;
+/* Default (non-active) rows: same background as the normal menu items. The active row keeps the
+   admin's standard selected background (theme-adaptive). */
+.cms-menu__list .cms-menu__group-items > li:not(.current) > a {
+    background: transparent !important;
 }
 
 /* Keep the group header looking deselected even when a child is active — the group still opens,
