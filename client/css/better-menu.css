@@ -17,7 +17,7 @@
     right: 0;
     z-index: 2;
     width: 44px;
-    height: 44px;
+    height: 52px; /* match the native header row so the chevron is vertically centred */
     padding: 0;
     background: transparent;
     border: 0;
@@ -38,10 +38,16 @@
     font-size: 12px;
 }
 
-/* Chevron glyph swap (down → up) instead of a CSS rotate — a Font Awesome Pro kit force-resets
-   transform/rotate on fa-* icons, so a rotation wouldn't stick. */
-.cms-menu__list .cms-menu__group.bt-open > .cms-menu__group-toggle i::before {
-    content: "\f077" !important; /* fa-chevron-up */
+/* Animated chevron rotate (down → up). The rotation is applied to a plain wrapper span, never
+   the fa-* element itself — a Font Awesome Pro kit force-resets transforms on its own icons, so
+   rotating the icon directly wouldn't stick; the wrapper is untouched by FA. */
+.cms-menu__list .cms-menu__group-chevron {
+    display: inline-flex;
+    transition: transform 300ms ease;
+}
+
+.cms-menu__list .cms-menu__group.bt-open > .cms-menu__group-toggle .cms-menu__group-chevron {
+    transform: rotate(180deg);
 }
 
 /* Children list. */

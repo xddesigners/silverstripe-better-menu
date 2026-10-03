@@ -14,7 +14,7 @@
 					<span class="text">$Title</span>
 				</a>
 				<button type="button" class="cms-menu__group-toggle" aria-label="<%t XD\\BetterMenu.Toggle 'Toggle group' %>">
-					<i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+					<span class="cms-menu__group-chevron"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></span>
 				</button>
 				<ul class="cms-menu__group-items">
 					<% loop $Children %>
