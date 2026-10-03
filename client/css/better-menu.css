@@ -71,7 +71,7 @@
     display: flex !important;
     align-items: center;
     gap: 0.5em;
-    padding: 6px 16px 6px 20px !important;
+    padding: 8px 16px 8px 20px !important;
     min-height: 0 !important;
     box-shadow: none !important; /* drop the native inset edge line */
 }
