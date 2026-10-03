@@ -57,6 +57,16 @@ The module ships these defaults (override any of them as above):
 | Settings | `SilverStripe\SiteConfig\SiteConfigLeftAndMain`   | `fa-solid fa-gear`        |
 | ModelAdmin (default) | `SilverStripe\Admin\ModelAdmin`       | `fa-solid fa-table-list`  |
 
+## Profile (user) icon
+
+The user icon at the top of the CMS menu isn't a menu-icon-class, so give it Font Awesome
+classes separately (swapped in client-side):
+
+```yaml
+XD\BetterIcons\BetterIcons:
+  profile_icon: 'fa-solid fa-circle-user'
+```
+
 ## Icon colour & opacity
 
 Set a global colour and/or opacity for the menu icons:

@@ -30,6 +30,15 @@ class BetterIcons
     private static array $menu_icons = [];
 
     /**
+     * Replace the profile (user) icon at the top of the CMS menu with Font Awesome classes
+     * (e.g. `fa-solid fa-circle-user`). Empty leaves the built-in icon. That icon isn't a
+     * Tab/menu-icon-class, so it's swapped client-side.
+     *
+     * @config
+     */
+    private static string $profile_icon = '';
+
+    /**
      * Global colour for the Font Awesome menu icons (any CSS colour, e.g. `#9aa7b2` or
      * `rgb(255 255 255)`). Empty leaves the CMS default (inherited sidebar colour).
      *

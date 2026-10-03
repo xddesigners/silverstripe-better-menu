@@ -62,5 +62,19 @@ class LeftAndMainExtension extends Extension
             '.cms-menu__list li .menu__icon[class*="fa-"]{' . $decls . '}',
             'better-icons-align'
         );
+
+        // The top profile (user) icon is hardcoded in the login-status template (font-icon-torso),
+        // not a menu-icon-class — swap its classes for the configured Font Awesome ones client-side.
+        $profileIcon = trim((string) BetterIcons::config()->get('profile_icon'));
+        if ($profileIcon !== '') {
+            Requirements::customScript(
+                '(function(){var c=' . json_encode($profileIcon) . ';function a(){'
+                . 'var el=document.querySelector(".cms-login-status__profile-icon");if(!el)return;'
+                . 'Array.prototype.slice.call(el.classList).forEach(function(x){if(x.indexOf("font-icon")===0)el.classList.remove(x);});'
+                . 'c.split(/\\s+/).forEach(function(x){if(x)el.classList.add(x);});}'
+                . 'if(document.readyState!=="loading"){a();}else{document.addEventListener("DOMContentLoaded",a);}})();',
+                'better-icons-profile'
+            );
+        }
     }
 }
