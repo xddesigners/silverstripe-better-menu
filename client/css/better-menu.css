@@ -68,7 +68,7 @@
 
 /* Active child: a very subtle blue tint + brand-blue left accent (no bold). */
 .cms-menu__list .cms-menu__group-items > li.current > a {
-    background: rgba(0, 90, 147, 0.1) !important;
+    background: rgba(0, 90, 147, 0.16) !important;
     box-shadow: inset 3px 0 0 var(--bt-group-accent, #005a93);
 }
 
