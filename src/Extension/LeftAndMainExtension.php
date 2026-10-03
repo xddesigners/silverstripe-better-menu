@@ -30,7 +30,8 @@ class LeftAndMainExtension extends Extension
     }
 
     /**
-     * Load the configured Font Awesome stylesheet (Free from cdnjs, or a custom/Pro URL).
+     * Load the configured Font Awesome stylesheet (Free from cdnjs, or a custom/Pro URL), and
+     * vertically centre Font Awesome menu icons.
      */
     protected function onAfterInit(): void
     {
@@ -38,5 +39,15 @@ class LeftAndMainExtension extends Extension
         if ($css !== '') {
             Requirements::css($css);
         }
+
+        // The admin positions .menu__icon at a fixed `top`/`margin-top` tuned for its own webfont;
+        // Font Awesome glyphs have different metrics and sit a little high there. Flex-centre them
+        // in the full menu-item height (scoped to FA icons, so native font-icons keep their place).
+        Requirements::customCSS(
+            '.cms-menu__list li .menu__icon[class*="fa-"]{'
+            . 'top:0!important;bottom:0!important;height:auto!important;margin-top:0!important;'
+            . 'display:flex!important;align-items:center!important;justify-content:center!important;}',
+            'better-icons-align'
+        );
     }
 }
