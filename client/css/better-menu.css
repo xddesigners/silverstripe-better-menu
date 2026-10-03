@@ -71,10 +71,9 @@
     background: rgba(0, 90, 147, 0.08) !important;
 }
 
-/* Active child: stronger blue + brand-blue left accent. */
+/* Active child: stronger blue fill. */
 .cms-menu__list .cms-menu__group-items > li.current > a {
     background: rgba(0, 90, 147, 0.16) !important;
-    box-shadow: inset 3px 0 0 var(--bt-group-accent, #005a93);
 }
 
 .cms-menu__list .cms-menu__group-items > li > a .menu__icon[class*="fa-"] {
