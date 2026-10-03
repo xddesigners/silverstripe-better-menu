@@ -5,6 +5,11 @@
     position: relative;
 }
 
+/* Subtle background fade on hover / selection. */
+.cms-menu__list li a {
+    transition: background-color 300ms ease;
+}
+
 /* Chevron toggle over the right of the group's header row (not the children). */
 .cms-menu__list .cms-menu__group-toggle {
     position: absolute;
