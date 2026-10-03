@@ -57,24 +57,27 @@ The module ships these defaults (override any of them as above):
 | Settings | `SilverStripe\SiteConfig\SiteConfigLeftAndMain`   | `fa-solid fa-gear`        |
 | ModelAdmin (default) | `SilverStripe\Admin\ModelAdmin`       | `fa-solid fa-table-list`  |
 
-## Profile (user) icon
+## Profile & logout icons
 
-The user icon at the top of the CMS menu isn't a menu-icon-class, so give it Font Awesome
-classes separately (swapped in client-side):
+The user and logout icons at the top of the CMS menu aren't menu-icon-classes, so give them
+Font Awesome classes separately (swapped in client-side). The profile name is also left-aligned
+with the menu titles.
 
 ```yaml
 XD\BetterIcons\BetterIcons:
   profile_icon: 'fa-solid fa-circle-user'
+  logout_icon: 'fa-solid fa-right-from-bracket'
 ```
 
 ## Icon colour & opacity
 
-Set a global colour and/or opacity for the menu icons:
+The menu icons default to the SilverStripe dark-blue header colour at full opacity. Override the
+global colour and/or opacity:
 
 ```yaml
 XD\BetterIcons\BetterIcons:
-  icon_color: '#9aa7b2'   # any CSS colour; empty keeps the CMS default
-  icon_opacity: 0.85      # 0–1; omit to leave as-is
+  icon_color: '#005a93'   # any CSS colour (default: SS dark blue); empty keeps the CMS default
+  icon_opacity: 1.0       # 0–1 (default: 1)
 ```
 
 ## Font Awesome: disable or use Pro
