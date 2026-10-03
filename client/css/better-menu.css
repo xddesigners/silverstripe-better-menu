@@ -77,6 +77,12 @@
     background: transparent !important;
 }
 
+/* Hover on a (non-active) child row — match the native menu hover background. (The :hover
+   selector is more specific than the transparent rule above, so it wins.) */
+.cms-menu__list .cms-menu__group-items > li:not(.current) > a:hover {
+    background: rgb(216, 228, 235) !important;
+}
+
 /* Keep the group header looking deselected even when a child is active — the group still opens,
    but the active state should read on the child row, not the header. Only when not hovered, so
    the native hover highlight still works. (The native active left-accent bar is kept.) */

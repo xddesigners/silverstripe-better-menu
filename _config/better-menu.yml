@@ -33,8 +33,16 @@ XD\BetterMenu\BetterMenu:
     'SilverStripe\Admin\ModelAdmin': 'fa-solid fa-table-list'
 
   # Optional: define the whole menu as an ordered tree with collapsible groups and per-item
-  # icon/color/opacity. When set, it layers on top of (and overrides) menu_icons. Unlisted
-  # sections keep their native position. Example:
+  # icon/colour/opacity. When set, it layers on top of (and overrides) menu_icons. Unlisted
+  # sections keep their native position.
+  #
+  # Per-item colours:
+  #   color       base colour — the icon AND the text both follow it
+  #   icon_color  override just the icon (falls back to `color`)
+  #   text_color  override just the text (falls back to `color`)
+  #   opacity     icon opacity (0–1)
+  #
+  # Example:
   #
   # menu:
   #   - group: 'Main'
@@ -44,5 +52,7 @@ XD\BetterMenu\BetterMenu:
   #       - section: 'SilverStripe\AssetAdmin\Controller\AssetAdmin'
   #       - section: 'SilverStripe\VersionedAdmin\ArchiveAdmin'
   #   - section: 'SilverStripe\Admin\SecurityAdmin'
-  #     color: '#c0392b'
-  #     opacity: 1.0
+  #     color: '#c0392b'          # red icon + red text
+  #   - section: 'My\Admin\ThingAdmin'
+  #     icon_color: '#16a085'     # teal icon
+  #     text_color: '#8e44ad'     # purple text
