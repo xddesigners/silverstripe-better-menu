@@ -1,11 +1,12 @@
 # Silverstripe Better Menu
 
-Polish the Silverstripe CMS **left menu**: replace the section icons (Pages, Files, Reports,
-Security, Archive, Settings, and any `ModelAdmin`) with **Font Awesome** ones, set their colour
-and opacity, swap the profile/logout icons, and tidy the alignment — all configured in YAML.
+Polish the Silverstripe CMS **left menu**: replace the section icons with **Font Awesome** ones,
+set their colour and opacity, swap the profile/logout icons, tidy the alignment — and, optionally,
+organise sections into **collapsible groups** — all configured in YAML.
 
 Out of the box it loads Font Awesome Free and applies a curated set of icons to the core CMS
-sections. Everything is overridable, and Font Awesome can be disabled or swapped for your Pro kit.
+sections (no grouping needed). Everything is overridable, grouping is opt-in, and Font Awesome can
+be disabled or swapped for your Pro kit.
 
 ![The CMS left menu with Font Awesome section icons](docs/images/menu.png)
 
@@ -26,12 +27,90 @@ Run `dev/build?flush=1` once.
 
 Each CMS menu section renders its icon from the admin controller's `menu_icon_class` config. The
 module loads Font Awesome into the CMS and overrides `menu_icon_class` for the classes in its
-`menu_icons` map (via a `LeftAndMain` extension), so no template or JS changes are needed.
+`menu_icons` map (via a `LeftAndMain` extension). Colours, opacity and the profile/logout icons are
+layered on with a small CSS/JS requirement.
+
+Grouping (below) additionally overrides a single admin template include
+(`SilverStripe/Admin/Includes/LeftAndMain_MenuList.ss`) to render the collapsible groups. With no
+groups configured the menu stays flat — just restyled — so you can use the module purely for icons.
+
+## Menu groups & per-item styling
+
+Define the whole menu as an ordered tree: group sections into collapsible fold-outs and style each
+item. Groups with 2+ present items become collapsible; a group **auto-expands** when one of its
+sections is active and **auto-collapses** when you navigate elsewhere (the chevron also toggles it
+by hand). Sections you don't list keep their native position.
+
+![Grouped menu with per-item colours](docs/images/options.png)
+
+```yaml
+XD\BetterMenu\BetterMenu:
+  menu:
+    - group: 'Main'
+      icon: 'fa-solid fa-house'
+      children:
+        - section: 'SilverStripe\CMS\Controllers\CMSMain'
+        - section: 'SilverStripe\AssetAdmin\Controller\AssetAdmin'
+        - section: 'SilverStripe\VersionedAdmin\ArchiveAdmin'
+    - section: 'SilverStripe\Admin\SecurityAdmin'
+      color: '#c0392b'          # red icon + red text
+    - section: 'App\Admin\ThingAdmin'
+      icon: 'fa-solid fa-cube'
+      icon_color: '#16a085'     # teal icon
+      text_color: '#8e44ad'     # purple text
+```
+
+**Group node** keys:
+
+| Key            | Effect                                                            |
+|----------------|-------------------------------------------------------------------|
+| `group`        | The group label shown in the menu (translatable).                 |
+| `icon`         | The group's icon (Font Awesome classes or a `font-icon-*` name).  |
+| `children`     | List of `section` nodes in the group.                             |
+| `priority`     | Optional sort priority (higher sorts first).                      |
+| `alphabetical` | `true` to sort the group's children A–Z (default: config order).  |
+
+**Section node** keys (usable on a top-level `section` or inside a group's `children`):
+
+| Key          | Effect                                                                      |
+|--------------|-----------------------------------------------------------------------------|
+| `section`    | The admin controller class.                                                 |
+| `icon`       | Font Awesome classes or a `font-icon-*` name.                               |
+| `color`      | Base colour — the icon **and** the text both follow it.                     |
+| `icon_color` | Override just the icon colour (falls back to `color`).                      |
+| `text_color` | Override just the text colour (falls back to `color`).                      |
+| `opacity`    | Icon opacity, `0`–`1`.                                                       |
+
+The `menu` tree layers on top of (and overrides) the simple `menu_icons` map below, so you can set
+icons globally and only reach for the tree when you want grouping or per-item colours.
+
+### Migrating from grouped-cms-menu
+
+Better Menu also reads the legacy `LeftAndMain.menu_groups` format (from
+[silverstripe-grouped-cms-menu](https://github.com/xddesigners/silverstripe-grouped-cms-menu)), so
+existing config keeps working:
+
+```yaml
+SilverStripe\Admin\LeftAndMain:
+  menu_groups:
+    'Shop':
+      items:
+        - 'App\Admin\ProductAdmin'
+        - 'App\Admin\OrderAdmin'
+      icon_class: 'fa-solid fa-bag-shopping'
+      priority: 100
+      alphabetical: true
+```
+
+New projects should prefer the richer `menu` tree above (it adds per-item colours and ordering).
+
+> **Template note:** grouping works by overriding the `LeftAndMain_MenuList.ss` include. If your
+> project (or another module) already overrides that same include, merge this module's version in.
 
 ## Configuring the icons
 
-Set icons per admin class in your project YAML (e.g. `app/_config/better-menu.yml`). The map is
-deep-merged with the module's defaults, so you only list what you want to change:
+For the simple case — just icons, no grouping — set them per admin class. The map is deep-merged
+with the module's defaults, so you only list what you want to change:
 
 ```yaml
 XD\BetterMenu\BetterMenu:
@@ -72,8 +151,8 @@ XD\BetterMenu\BetterMenu:
 
 ## Icon colour & opacity
 
-The menu icons default to the SilverStripe dark-blue header colour at full opacity. Override the
-global colour and/or opacity:
+The menu icons default to the SilverStripe dark-blue header colour. Override the global colour
+and/or opacity (per-item colours in the `menu` tree take precedence):
 
 ```yaml
 XD\BetterMenu\BetterMenu:
