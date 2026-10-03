@@ -10,6 +10,9 @@ SilverStripe\Admin\LeftAndMain:
 # built-in webfont for that one.
 XD\BetterIcons\BetterIcons:
   include_fontawesome_free: true
+  # Default icon colour = the SilverStripe dark-blue header colour.
+  icon_color: '#005a93'
+  icon_opacity: 1.0
   menu_icons:
     'SilverStripe\CMS\Controllers\CMSMain': 'fa-solid fa-folder-tree'
     'SilverStripe\AssetAdmin\Controller\AssetAdmin': 'fa-solid fa-image'
