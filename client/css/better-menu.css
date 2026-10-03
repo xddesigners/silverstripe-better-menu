@@ -1,0 +1,62 @@
+/* Better Menu — grouped/collapsible CMS menu structure. (Icon alignment, colour and opacity are
+   emitted by the PHP extension so they can follow config.) */
+
+.cms-menu__list li.cms-menu__group {
+    position: relative;
+}
+
+/* Chevron toggle over the right of the group's header row (not the children). */
+.cms-menu__list .cms-menu__group-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    opacity: 0.6;
+}
+
+.cms-menu__list .cms-menu__group-toggle:hover {
+    opacity: 1;
+}
+
+.cms-menu__list .cms-menu__group-toggle i {
+    margin: 0;
+    font-size: 12px;
+}
+
+/* Chevron glyph swap (down → up) instead of a CSS rotate — a Font Awesome Pro kit force-resets
+   transform/rotate on fa-* icons, so a rotation wouldn't stick. */
+.cms-menu__list .cms-menu__group.opened > .cms-menu__group-toggle i::before {
+    content: "\f077" !important; /* fa-chevron-up */
+}
+
+/* Children list. */
+.cms-menu__list .cms-menu__group-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.cms-menu__list .cms-menu__group:not(.opened) .cms-menu__group-items {
+    display: none;
+}
+
+/* Indent the group's children so they read as nested. */
+.cms-menu__list .cms-menu__group-items li a {
+    padding-left: 3.2rem;
+}
+
+/* Collapsed (icon-only) sidebar: reveal children on hover of the group. */
+.cms-menu.collapsed .cms-menu__list .cms-menu__group:hover .cms-menu__group-items {
+    display: block;
+}

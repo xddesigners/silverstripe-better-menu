@@ -2,54 +2,56 @@
 
 namespace XD\BetterMenu\Extension;
 
+use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Extension;
+use SilverStripe\Model\ArrayData;
+use SilverStripe\Model\List\ArrayList;
+use SilverStripe\Model\List\GroupedList;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBText;
 use SilverStripe\View\Requirements;
 use XD\BetterMenu\BetterMenu;
 
 /**
- * Applies the configured left-menu icons (by overriding each admin's `menu_icon_class`) and loads
- * the chosen Font Awesome stylesheet into the CMS. See {@link BetterMenu}.
+ * Better Menu — groups and restyles the native CMS left menu.
  *
- * @extends Extension<\SilverStripe\Admin\LeftAndMain>
+ * Works out of the box with just the icon/colour styling (no grouping needed). When groups are
+ * configured, grouping is server-side via a `LeftAndMain_MenuList.ss` override (only that
+ * include), so the native sidebar — collapse toggle + version indicator — stays intact.
+ * Per-section icons come from `menu_icon_class` (set here from config); colours/opacity and the
+ * profile/logout icons are layered on with CSS/JS. See {@link BetterMenu}.
+ *
+ * @extends Extension<LeftAndMain>
  */
 class LeftAndMainExtension extends Extension
 {
     /**
-     * Override menu_icon_class for each configured admin before the main menu is built.
+     * Apply per-section icons (menu_icon_class) from the config before the menu is built.
      */
     protected function onInit(): void
     {
-        $map = BetterMenu::config()->get('menu_icons') ?: [];
-        foreach ($map as $class => $iconClass) {
-            if (is_string($class) && is_string($iconClass) && $iconClass !== '') {
-                // Note: a class that sets a `menu_icon` image still wins over the class.
-                Config::modify()->set($class, 'menu_icon_class', $iconClass);
+        foreach ($this->collectBetterMenu()['items'] as $class => $opts) {
+            if (!empty($opts['icon']) && is_string($class)) {
+                Config::modify()->set($class, 'menu_icon_class', $opts['icon']);
             }
         }
     }
 
-    /**
-     * Load the configured Font Awesome stylesheet (Free from cdnjs, or a custom/Pro URL), and
-     * vertically centre Font Awesome menu icons.
-     */
     protected function onAfterInit(): void
     {
+        // Font Awesome (FA6 Free from cdnjs, or a custom/Pro URL).
         $css = BetterMenu::fontAwesomeCss();
         if ($css !== '') {
             Requirements::css($css);
         }
 
-        // The admin positions .menu__icon at a fixed `top`/`margin-top` tuned for its own webfont;
-        // Font Awesome glyphs have different metrics (and varying widths). Flex-centre them in the
-        // full menu-item height and give every icon the same width (fa-fw style) so the icon column
-        // is even. Scoped to FA icons, so native font-icons keep their place.
         $decls = 'top:0!important;bottom:0!important;height:auto!important;margin-top:0!important;'
             . 'width:1.25em!important;font-size:16px!important;text-align:left!important;'
             . 'display:flex!important;align-items:center!important;justify-content:flex-start!important;';
 
-        // Optional global colour / opacity.
-        $color = preg_replace('/[^a-zA-Z0-9#(),.%\s\/-]/', '', trim((string) BetterMenu::config()->get('icon_color')));
+        // Global icon colour / opacity.
+        $color = $this->safeColor((string) BetterMenu::config()->get('icon_color'));
         if ($color !== '') {
             $decls .= 'color:' . $color . '!important;';
         }
@@ -58,18 +60,30 @@ class LeftAndMainExtension extends Extension
             $decls .= 'opacity:' . (float) $opacity . '!important;';
         }
 
-        Requirements::customCSS(
-            '.cms-menu__list li .menu__icon[class*="fa-"]{' . $decls . '}'
-            // Left-align the profile name's glyph with the menu titles (the profile link indents
-            // to the title column, and the text's own left padding is removed so it lands at the
-            // same x, not pushed further right).
+        $cssOut = '.cms-menu__list li .menu__icon[class*="fa-"]{' . $decls . '}'
+            // Left-align the profile name with the menu titles.
             . '.cms-login-status__profile-link{padding-left:40px!important;}'
-            . '.cms-login-status__profile-text{padding-left:0!important;}',
-            'better-menu-align'
-        );
+            . '.cms-login-status__profile-text{padding-left:0!important;}';
 
-        // The top profile + logout icons are hardcoded in the login-status template (font-icon-*),
-        // not menu-icon-classes — swap them for the configured Font Awesome classes client-side.
+        // Per-item colour / opacity overrides, keyed by the menu item id (#Menu-<Code>).
+        foreach ($this->collectBetterMenu()['items'] as $class => $opts) {
+            $itemCss = '';
+            $c = $this->safeColor((string) ($opts['color'] ?? ''));
+            if ($c !== '') {
+                $itemCss .= 'color:' . $c . '!important;';
+            }
+            if (isset($opts['opacity']) && $opts['opacity'] !== null && $opts['opacity'] !== '') {
+                $itemCss .= 'opacity:' . (float) $opts['opacity'] . '!important;';
+            }
+            if ($itemCss !== '') {
+                $code = str_replace('\\', '-', (string) $class);
+                $cssOut .= '#Menu-' . $code . ' .menu__icon{' . $itemCss . '}';
+            }
+        }
+
+        Requirements::customCSS($cssOut, 'better-menu-style');
+
+        // Swap the hardcoded profile + logout icons for the configured Font Awesome classes.
         $swaps = array_filter([
             '.cms-login-status__profile-icon' => trim((string) BetterMenu::config()->get('profile_icon')),
             '.cms-login-status__logout-link .font-icon-logout' => trim((string) BetterMenu::config()->get('logout_icon')),
@@ -84,5 +98,169 @@ class LeftAndMainExtension extends Extension
                 'better-menu-swap'
             );
         }
+    }
+
+    /**
+     * Grouped version of the native CMS main menu, rendered by this module's
+     * LeftAndMain_MenuList.ss override. With no groups configured every item is "its own group"
+     * and renders as a normal row — i.e. the menu looks native (just restyled). Groups with 2+
+     * present items become collapsible parents.
+     */
+    public function GroupedMainMenu(): ArrayList
+    {
+        $items = $this->getOwner()->MainMenu();
+        $groups = $this->collectBetterMenu()['groups'];
+
+        // Map each configured menu-item Code -> group + sort metadata.
+        $itemsToGroup = [];
+        foreach ($groups as $group) {
+            if (empty($group['codes'])) {
+                continue;
+            }
+            $priority = $group['priority'] ?? $group['groupSort'];
+            $itemSort = 0;
+            foreach ($group['codes'] as $code) {
+                $itemsToGroup[$code] = [
+                    'Group' => $group['title'],
+                    'Priority' => $priority,
+                    'SortOrder' => $itemSort++,
+                ];
+            }
+        }
+
+        // Tag each live menu item with its group (or itself when ungrouped).
+        foreach ($items as $item) {
+            if (isset($itemsToGroup[$item->Code])) {
+                $item->Group = $itemsToGroup[$item->Code]['Group'];
+                $item->Priority = $itemsToGroup[$item->Code]['Priority'];
+                $item->SortOrder = $itemsToGroup[$item->Code]['SortOrder'];
+            } else {
+                $item->Group = $item->Code;
+                $priority = $item->MenuItem->priority ?? null;
+                $item->Priority = is_numeric($priority) ? $priority : -1;
+                $item->SortOrder = 0;
+            }
+        }
+
+        // Look up a group's config (icon, alphabetical) by title.
+        $byTitle = [];
+        foreach ($groups as $group) {
+            $byTitle[$group['title']] = $group;
+        }
+
+        $result = ArrayList::create();
+        $grouped = GroupedList::create($items->sort(['Priority' => 'DESC']))->groupBy('Group');
+
+        foreach ($grouped as $groupName => $children) {
+            if ($children->count() > 1 && isset($byTitle[$groupName])) {
+                $cfg = $byTitle[$groupName];
+                $active = false;
+                foreach ($children as $child) {
+                    if ($child->LinkingMode === 'current') {
+                        $active = true;
+                    }
+                }
+                $code = str_replace(' ', '_', (string) $groupName);
+                $result->push(ArrayData::create([
+                    'Title' => _t('XD\\BetterMenu\\Group.' . $code, $groupName),
+                    'IconClass' => $cfg['icon'] ?? 'font-icon-menu-modeladmin',
+                    'Code' => DBField::create_field(DBText::class, $code),
+                    'Link' => $children->first()->Link,
+                    'LinkingMode' => $active ? 'current' : 'link',
+                    'Children' => !empty($cfg['alphabetical']) ? $children->sort('Title') : $children->sort('SortOrder'),
+                ]));
+            } else {
+                $result->push($children->first());
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Normalise the module config into a single model:
+     *   ['groups' => [ ['title','icon','priority','alphabetical','codes'[],'groupSort'] ],
+     *    'items'  => [ '<Class>' => ['icon','color','opacity'] ] ]
+     * Reads the rich `BetterMenu.menu` tree, the legacy `LeftAndMain.menu_groups`, and the
+     * simple `BetterMenu.menu_icons` map.
+     */
+    protected function collectBetterMenu(): array
+    {
+        $groups = [];
+        $items = [];
+        $groupSort = 0;
+
+        // 1) Rich tree: ordered list of group/section nodes.
+        foreach ((array) BetterMenu::config()->get('menu') as $node) {
+            if (!is_array($node)) {
+                continue;
+            }
+            if (isset($node['group'])) {
+                $codes = [];
+                foreach (($node['children'] ?? []) as $child) {
+                    if (is_string($child)) {
+                        $class = $child;
+                        $opts = [];
+                    } elseif (is_array($child) && isset($child['section'])) {
+                        $class = $child['section'];
+                        $opts = $child;
+                    } else {
+                        continue;
+                    }
+                    $codes[] = str_replace('\\', '-', (string) $class);
+                    $items[$class] = $this->mergeItem($items[$class] ?? [], $opts);
+                }
+                $groups[] = [
+                    'title' => (string) $node['group'],
+                    'icon' => $node['icon'] ?? null,
+                    'priority' => $node['priority'] ?? null,
+                    'alphabetical' => (bool) ($node['alphabetical'] ?? false),
+                    'codes' => $codes,
+                    'groupSort' => $groupSort--,
+                ];
+            } elseif (isset($node['section'])) {
+                $items[$node['section']] = $this->mergeItem($items[$node['section']] ?? [], $node);
+            }
+        }
+
+        // 2) Legacy LeftAndMain.menu_groups (grouped-cms-menu compatibility).
+        foreach ((array) Config::inst()->get(LeftAndMain::class, 'menu_groups') as $title => $settings) {
+            $codes = $settings['items'] ?? [];
+            if (!is_array($codes) || !count($codes)) {
+                continue;
+            }
+            $groups[] = [
+                'title' => (string) $title,
+                'icon' => $settings['icon_class'] ?? null,
+                'priority' => $settings['priority'] ?? null,
+                'alphabetical' => (bool) ($settings['alphabetical'] ?? false),
+                'codes' => $codes,
+                'groupSort' => $groupSort--,
+            ];
+        }
+
+        // 3) Simple menu_icons map (icon only), as a fallback for un-styled items.
+        foreach ((array) BetterMenu::config()->get('menu_icons') as $class => $icon) {
+            if (is_string($class) && is_string($icon) && $icon !== '' && empty($items[$class]['icon'])) {
+                $items[$class]['icon'] = $icon;
+            }
+        }
+
+        return ['groups' => $groups, 'items' => $items];
+    }
+
+    private function mergeItem(array $existing, array $opts): array
+    {
+        foreach (['icon', 'color', 'opacity'] as $k) {
+            if (array_key_exists($k, $opts) && $opts[$k] !== null && $opts[$k] !== '') {
+                $existing[$k] = $opts[$k];
+            }
+        }
+        return $existing;
+    }
+
+    private function safeColor(string $color): string
+    {
+        return (string) preg_replace('/[^a-zA-Z0-9#(),.%\s\/-]/', '', trim($color));
     }
 }

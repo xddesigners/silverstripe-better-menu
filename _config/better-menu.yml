@@ -1,18 +1,28 @@
 ---
 Name: xd-better-menu
+After: 'framework/*, cms/*'
 ---
 SilverStripe\Admin\LeftAndMain:
+  extra_requirements_css:
+    - 'xddesigners/silverstripe-better-menu:client/css/better-menu.css'
+  extra_requirements_javascript:
+    - 'xddesigners/silverstripe-better-menu:client/js/better-menu.js'
   extensions:
     - XD\BetterMenu\Extension\LeftAndMainExtension
 
-# Curated Font Awesome defaults for the core CMS sections. Override or extend any entry from your
-# own project YAML (the map is deep-merged). Set a value to a CMS `font-icon-*` name to keep the
-# built-in webfont for that one.
+# Works out of the box: the curated section icons + colour/opacity below apply with no grouping.
+# Grouping is opt-in — see the commented `menu` tree at the bottom.
 XD\BetterMenu\BetterMenu:
   include_fontawesome_free: true
   # Default icon colour = the SilverStripe dark-blue header colour.
   icon_color: '#005a93'
   icon_opacity: 0.8
+  # Top-of-menu profile + logout icons (swapped client-side).
+  profile_icon: 'fa-solid fa-circle-user'
+  logout_icon: 'fa-solid fa-right-from-bracket'
+
+  # Simple per-section icon map (curated defaults). Override/extend in your project YAML; set a
+  # value to a CMS `font-icon-*` name to keep the built-in webfont for that one.
   menu_icons:
     'SilverStripe\CMS\Controllers\CMSMain': 'fa-solid fa-folder-tree'
     'SilverStripe\AssetAdmin\Controller\AssetAdmin': 'fa-solid fa-image'
@@ -21,3 +31,18 @@ XD\BetterMenu\BetterMenu:
     'SilverStripe\VersionedAdmin\ArchiveAdmin': 'fa-solid fa-box-archive'
     'SilverStripe\SiteConfig\SiteConfigLeftAndMain': 'fa-solid fa-gear'
     'SilverStripe\Admin\ModelAdmin': 'fa-solid fa-table-list'
+
+  # Optional: define the whole menu as an ordered tree with collapsible groups and per-item
+  # icon/color/opacity. When set, it layers on top of (and overrides) menu_icons. Unlisted
+  # sections keep their native position. Example:
+  #
+  # menu:
+  #   - group: 'Main'
+  #     icon: 'fa-solid fa-house'
+  #     children:
+  #       - section: 'SilverStripe\CMS\Controllers\CMSMain'
+  #       - section: 'SilverStripe\AssetAdmin\Controller\AssetAdmin'
+  #       - section: 'SilverStripe\VersionedAdmin\ArchiveAdmin'
+  #   - section: 'SilverStripe\Admin\SecurityAdmin'
+  #     color: '#c0392b'
+  #     opacity: 1.0
