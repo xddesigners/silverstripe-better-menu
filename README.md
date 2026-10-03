@@ -52,7 +52,7 @@ The module ships these defaults (override any of them as above):
 | Pages    | `SilverStripe\CMS\Controllers\CMSMain`            | `fa-solid fa-sitemap`     |
 | Files    | `SilverStripe\AssetAdmin\Controller\AssetAdmin`   | `fa-solid fa-folder-open` |
 | Reports  | `SilverStripe\Reports\ReportAdmin`                | `fa-solid fa-chart-line`  |
-| Security | `SilverStripe\Admin\SecurityAdmin`                | `fa-solid fa-users`       |
+| Security | `SilverStripe\Admin\SecurityAdmin`                | `fa-solid fa-user-pen`       |
 | Archive  | `SilverStripe\VersionedAdmin\ArchiveAdmin`        | `fa-solid fa-box-archive` |
 | Settings | `SilverStripe\SiteConfig\SiteConfigLeftAndMain`   | `fa-solid fa-gear`        |
 | ModelAdmin (default) | `SilverStripe\Admin\ModelAdmin`       | `fa-solid fa-table-list`  |

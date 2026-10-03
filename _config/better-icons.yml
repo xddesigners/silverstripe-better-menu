@@ -14,7 +14,7 @@ XD\BetterIcons\BetterIcons:
     'SilverStripe\CMS\Controllers\CMSMain': 'fa-solid fa-sitemap'
     'SilverStripe\AssetAdmin\Controller\AssetAdmin': 'fa-solid fa-folder-open'
     'SilverStripe\Reports\ReportAdmin': 'fa-solid fa-chart-line'
-    'SilverStripe\Admin\SecurityAdmin': 'fa-solid fa-users'
+    'SilverStripe\Admin\SecurityAdmin': 'fa-solid fa-user-pen'
     'SilverStripe\VersionedAdmin\ArchiveAdmin': 'fa-solid fa-box-archive'
     'SilverStripe\SiteConfig\SiteConfigLeftAndMain': 'fa-solid fa-gear'
     'SilverStripe\Admin\ModelAdmin': 'fa-solid fa-table-list'
