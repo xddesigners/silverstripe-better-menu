@@ -1,0 +1,20 @@
+---
+Name: xd-better-icons
+---
+SilverStripe\Admin\LeftAndMain:
+  extensions:
+    - XD\BetterIcons\Extension\LeftAndMainExtension
+
+# Curated Font Awesome defaults for the core CMS sections. Override or extend any entry from your
+# own project YAML (the map is deep-merged). Set a value to a CMS `font-icon-*` name to keep the
+# built-in webfont for that one.
+XD\BetterIcons\BetterIcons:
+  include_fontawesome_free: true
+  menu_icons:
+    'SilverStripe\CMS\Controllers\CMSMain': 'fa-solid fa-sitemap'
+    'SilverStripe\AssetAdmin\Controller\AssetAdmin': 'fa-solid fa-folder-open'
+    'SilverStripe\Reports\ReportAdmin': 'fa-solid fa-chart-line'
+    'SilverStripe\Admin\SecurityAdmin': 'fa-solid fa-users'
+    'SilverStripe\VersionedAdmin\ArchiveAdmin': 'fa-solid fa-box-archive'
+    'SilverStripe\SiteConfig\SiteConfigLeftAndMain': 'fa-solid fa-gear'
+    'SilverStripe\Admin\ModelAdmin': 'fa-solid fa-table-list'
