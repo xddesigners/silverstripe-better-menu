@@ -51,14 +51,26 @@
     display: none;
 }
 
+/* Group children block: a subtle shaded band so the group reads as one unit. */
+.cms-menu__list .cms-menu__group-items {
+    background: rgba(0, 0, 0, 0.045);
+}
+
 /* Group children: a compact, tightly-aligned nested list — indented, smaller icons sitting
    right next to the title (overrides the native absolute-icon + title-margin layout). */
 .cms-menu__list .cms-menu__group-items > li > a {
     display: flex !important;
     align-items: center;
     gap: 0.5em;
-    padding: 6px 16px 6px 30px !important;
+    padding: 6px 16px 6px 24px !important;
     min-height: 0 !important;
+}
+
+/* Active child: highlight + brand-blue left accent. */
+.cms-menu__list .cms-menu__group-items > li.current > a {
+    background: rgba(0, 0, 0, 0.07) !important;
+    box-shadow: inset 3px 0 0 var(--bt-group-accent, #005a93);
+    font-weight: 600;
 }
 
 .cms-menu__list .cms-menu__group-items > li > a .menu__icon[class*="fa-"] {
