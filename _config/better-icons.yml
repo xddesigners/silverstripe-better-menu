@@ -11,7 +11,7 @@ SilverStripe\Admin\LeftAndMain:
 XD\BetterIcons\BetterIcons:
   include_fontawesome_free: true
   menu_icons:
-    'SilverStripe\CMS\Controllers\CMSMain': 'fa-solid fa-sitemap'
+    'SilverStripe\CMS\Controllers\CMSMain': 'fa-solid fa-folder-tree'
     'SilverStripe\AssetAdmin\Controller\AssetAdmin': 'fa-solid fa-folder-open'
     'SilverStripe\Reports\ReportAdmin': 'fa-solid fa-chart-simple'
     'SilverStripe\Admin\SecurityAdmin': 'fa-solid fa-user-pen'

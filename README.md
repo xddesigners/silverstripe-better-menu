@@ -49,7 +49,7 @@ The module ships these defaults (override any of them as above):
 
 | Section  | Class                                             | Icon                      |
 |----------|---------------------------------------------------|---------------------------|
-| Pages    | `SilverStripe\CMS\Controllers\CMSMain`            | `fa-solid fa-sitemap`     |
+| Pages    | `SilverStripe\CMS\Controllers\CMSMain`            | `fa-solid fa-folder-tree`     |
 | Files    | `SilverStripe\AssetAdmin\Controller\AssetAdmin`   | `fa-solid fa-folder-open` |
 | Reports  | `SilverStripe\Reports\ReportAdmin`                | `fa-solid fa-chart-simple`  |
 | Security | `SilverStripe\Admin\SecurityAdmin`                | `fa-solid fa-user-pen`       |
