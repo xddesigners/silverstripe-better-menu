@@ -60,8 +60,11 @@ class LeftAndMainExtension extends Extension
 
         Requirements::customCSS(
             '.cms-menu__list li .menu__icon[class*="fa-"]{' . $decls . '}'
-            // Left-align the profile name with the menu titles.
-            . '.cms-login-status__profile-link{padding-left:40px!important;}',
+            // Left-align the profile name's glyph with the menu titles (the profile link indents
+            // to the title column, and the text's own left padding is removed so it lands at the
+            // same x, not pushed further right).
+            . '.cms-login-status__profile-link{padding-left:40px!important;}'
+            . '.cms-login-status__profile-text{padding-left:0!important;}',
             'better-icons-align'
         );
 

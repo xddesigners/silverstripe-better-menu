@@ -77,7 +77,7 @@ global colour and/or opacity:
 ```yaml
 XD\BetterIcons\BetterIcons:
   icon_color: '#005a93'   # any CSS colour (default: SS dark blue); empty keeps the CMS default
-  icon_opacity: 1.0       # 0–1 (default: 1)
+  icon_opacity: 0.8       # 0–1 (default: 0.8)
 ```
 
 ## Font Awesome: disable or use Pro
