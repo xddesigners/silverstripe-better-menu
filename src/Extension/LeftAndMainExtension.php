@@ -44,11 +44,22 @@ class LeftAndMainExtension extends Extension
         // Font Awesome glyphs have different metrics (and varying widths). Flex-centre them in the
         // full menu-item height and give every icon the same width (fa-fw style) so the icon column
         // is even. Scoped to FA icons, so native font-icons keep their place.
-        Requirements::customCSS(
-            '.cms-menu__list li .menu__icon[class*="fa-"]{'
-            . 'top:0!important;bottom:0!important;height:auto!important;margin-top:0!important;'
+        $decls = 'top:0!important;bottom:0!important;height:auto!important;margin-top:0!important;'
             . 'width:1.25em!important;font-size:16px!important;text-align:left!important;'
-            . 'display:flex!important;align-items:center!important;justify-content:flex-start!important;}',
+            . 'display:flex!important;align-items:center!important;justify-content:flex-start!important;';
+
+        // Optional global colour / opacity.
+        $color = preg_replace('/[^a-zA-Z0-9#(),.%\s\/-]/', '', trim((string) BetterIcons::config()->get('icon_color')));
+        if ($color !== '') {
+            $decls .= 'color:' . $color . '!important;';
+        }
+        $opacity = BetterIcons::config()->get('icon_opacity');
+        if ($opacity !== null) {
+            $decls .= 'opacity:' . (float) $opacity . '!important;';
+        }
+
+        Requirements::customCSS(
+            '.cms-menu__list li .menu__icon[class*="fa-"]{' . $decls . '}',
             'better-icons-align'
         );
     }

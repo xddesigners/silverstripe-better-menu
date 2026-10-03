@@ -30,6 +30,21 @@ class BetterIcons
     private static array $menu_icons = [];
 
     /**
+     * Global colour for the Font Awesome menu icons (any CSS colour, e.g. `#9aa7b2` or
+     * `rgb(255 255 255)`). Empty leaves the CMS default (inherited sidebar colour).
+     *
+     * @config
+     */
+    private static string $icon_color = '';
+
+    /**
+     * Global opacity for the Font Awesome menu icons (0–1). Null leaves it as-is.
+     *
+     * @config
+     */
+    private static ?float $icon_opacity = null;
+
+    /**
      * Load Font Awesome Free (from cdnjs) into the CMS. On by default for this module (its icons
      * are Font Awesome); set to false to disable all Font Awesome loading. Ignored when
      * `fontawesome_css` is set.

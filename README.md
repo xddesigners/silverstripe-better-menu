@@ -57,6 +57,16 @@ The module ships these defaults (override any of them as above):
 | Settings | `SilverStripe\SiteConfig\SiteConfigLeftAndMain`   | `fa-solid fa-gear`        |
 | ModelAdmin (default) | `SilverStripe\Admin\ModelAdmin`       | `fa-solid fa-table-list`  |
 
+## Icon colour & opacity
+
+Set a global colour and/or opacity for the menu icons:
+
+```yaml
+XD\BetterIcons\BetterIcons:
+  icon_color: '#9aa7b2'   # any CSS colour; empty keeps the CMS default
+  icon_opacity: 0.85      # 0–1; omit to leave as-is
+```
+
 ## Font Awesome: disable or use Pro
 
 Font Awesome Free is loaded from cdnjs by default. Turn it off, or point at your own Pro kit/CSS:
