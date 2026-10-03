@@ -65,19 +65,28 @@ class LeftAndMainExtension extends Extension
             . '.cms-login-status__profile-link{padding-left:40px!important;}'
             . '.cms-login-status__profile-text{padding-left:0!important;}';
 
-        // Per-item colour / opacity overrides, keyed by the menu item id (#Menu-<Code>).
+        // Per-item colours / opacity, keyed by the menu item id (#Menu-<Code>). `color` is the base
+        // colour the item's icon AND text both follow; `icon_color` / `text_color` override just one
+        // of them. (Opacity applies to the icon.)
         foreach ($this->collectBetterMenu()['items'] as $class => $opts) {
-            $itemCss = '';
-            $c = $this->safeColor((string) ($opts['color'] ?? ''));
-            if ($c !== '') {
-                $itemCss .= 'color:' . $c . '!important;';
+            $base = $this->safeColor((string) ($opts['color'] ?? ''));
+            $iconColor = $this->safeColor((string) ($opts['icon_color'] ?? '')) ?: $base;
+            $textColor = $this->safeColor((string) ($opts['text_color'] ?? '')) ?: $base;
+
+            $iconCss = '';
+            if ($iconColor !== '') {
+                $iconCss .= 'color:' . $iconColor . '!important;';
             }
             if (isset($opts['opacity']) && $opts['opacity'] !== null && $opts['opacity'] !== '') {
-                $itemCss .= 'opacity:' . (float) $opts['opacity'] . '!important;';
+                $iconCss .= 'opacity:' . (float) $opts['opacity'] . '!important;';
             }
-            if ($itemCss !== '') {
-                $code = str_replace('\\', '-', (string) $class);
-                $cssOut .= '#Menu-' . $code . ' .menu__icon{' . $itemCss . '}';
+
+            $code = str_replace('\\', '-', (string) $class);
+            if ($iconCss !== '') {
+                $cssOut .= '#Menu-' . $code . ' .menu__icon{' . $iconCss . '}';
+            }
+            if ($textColor !== '') {
+                $cssOut .= '#Menu-' . $code . ' .text{color:' . $textColor . '!important;}';
             }
         }
 
@@ -180,7 +189,7 @@ class LeftAndMainExtension extends Extension
     /**
      * Normalise the module config into a single model:
      *   ['groups' => [ ['title','icon','priority','alphabetical','codes'[],'groupSort'] ],
-     *    'items'  => [ '<Class>' => ['icon','color','opacity'] ] ]
+     *    'items'  => [ '<Class>' => ['icon','color','icon_color','text_color','opacity'] ] ]
      * Reads the rich `BetterMenu.menu` tree, the legacy `LeftAndMain.menu_groups`, and the
      * simple `BetterMenu.menu_icons` map.
      */
@@ -251,7 +260,7 @@ class LeftAndMainExtension extends Extension
 
     private function mergeItem(array $existing, array $opts): array
     {
-        foreach (['icon', 'color', 'opacity'] as $k) {
+        foreach (['icon', 'color', 'icon_color', 'text_color', 'opacity'] as $k) {
             if (array_key_exists($k, $opts) && $opts[$k] !== null && $opts[$k] !== '') {
                 $existing[$k] = $opts[$k];
             }
