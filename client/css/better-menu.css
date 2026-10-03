@@ -79,14 +79,9 @@
 
 /* Keep the group header looking deselected even when a child is active — the group still opens,
    but the active state should read on the child row, not the header. Only when not hovered, so
-   the native hover highlight still works. Also hide the native active left-accent bar (keep its
-   3px width so the icon stays aligned). */
+   the native hover highlight still works. (The native active left-accent bar is kept.) */
 .cms-menu__list li.cms-menu__group.current > a:not(:hover) {
     background: rgb(233, 240, 244) !important;
-}
-
-.cms-menu__list li.cms-menu__group.current {
-    border-left-color: transparent !important;
 }
 
 .cms-menu__list .cms-menu__group-items > li > a .menu__icon[class*="fa-"] {
