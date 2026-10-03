@@ -4,7 +4,7 @@
 <ul class="cms-menu__list">
 	<% loop $GroupedMainMenu %>
 		<% if $Children %>
-			<li class="$LinkingMode $FirstLast children cms-menu__group<% if $LinkingMode != 'link' %> opened<% end_if %>" id="Menu-$Code" title="$Title.ATT">
+			<li class="$LinkingMode $FirstLast cms-menu__group<% if $LinkingMode != 'link' %> opened bt-open<% end_if %>" id="Menu-$Code" title="$Title.ATT">
 				<a href="$Link" $AttributesHTML aria-label="$Title">
 					<% if $IconClass %>
 						<span class="menu__icon $IconClass" aria-hidden="true"></span>
@@ -34,7 +34,7 @@
 				</ul>
 			</li>
 		<% else %>
-			<li class="$LinkingMode $FirstLast" id="Menu-$Code" title="$Title.ATT">
+			<li class="$LinkingMode $FirstLast<% if $LinkingMode != 'link' %> opened<% end_if %>" id="Menu-$Code" title="$Title.ATT">
 				<a href="$Link" $AttributesHTML aria-label="$Title">
 					<% if $IconClass %>
 						<span class="menu__icon $IconClass" aria-hidden="true"></span>

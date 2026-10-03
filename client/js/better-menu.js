@@ -19,9 +19,9 @@
             try {
                 var saved = localStorage.getItem(key);
                 if (saved === 'open') {
-                    li.classList.add('opened');
+                    li.classList.add('bt-open');
                 } else if (saved === 'closed') {
-                    li.classList.remove('opened');
+                    li.classList.remove('bt-open');
                 }
             } catch (e) { /* storage unavailable */ }
 
@@ -34,7 +34,7 @@
                 toggle.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    var open = li.classList.toggle('opened');
+                    var open = li.classList.toggle('bt-open');
                     try {
                         localStorage.setItem(key, open ? 'open' : 'closed');
                     } catch (e) { /* ignore */ }

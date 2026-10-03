@@ -35,7 +35,7 @@
 
 /* Chevron glyph swap (down → up) instead of a CSS rotate — a Font Awesome Pro kit force-resets
    transform/rotate on fa-* icons, so a rotation wouldn't stick. */
-.cms-menu__list .cms-menu__group.opened > .cms-menu__group-toggle i::before {
+.cms-menu__list .cms-menu__group.bt-open > .cms-menu__group-toggle i::before {
     content: "\f077" !important; /* fa-chevron-up */
 }
 
@@ -47,7 +47,7 @@
     overflow: hidden;
 }
 
-.cms-menu__list .cms-menu__group:not(.opened) .cms-menu__group-items {
+.cms-menu__list .cms-menu__group:not(.bt-open) .cms-menu__group-items {
     display: none;
 }
 
