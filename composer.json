@@ -1,6 +1,6 @@
 {
-    "name": "xddesigners/silverstripe-better-icons",
-    "description": "Replace the Silverstripe CMS left main-menu icons with nicer ones from Font Awesome (Free or Pro), configured in YAML.",
+    "name": "xddesigners/silverstripe-better-menu",
+    "description": "Improve the Silverstripe CMS left menu: Font Awesome section icons, colours and alignment, configured in YAML.",
     "type": "silverstripe-vendormodule",
     "keywords": [
         "silverstripe",
@@ -24,7 +24,7 @@
     },
     "autoload": {
         "psr-4": {
-            "XD\\BetterIcons\\": "src/"
+            "XD\\BetterMenu\\": "src/"
         }
     },
     "extra": {

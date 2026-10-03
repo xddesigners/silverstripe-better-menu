@@ -1,15 +1,15 @@
 <?php
 
-namespace XD\BetterIcons\Extension;
+namespace XD\BetterMenu\Extension;
 
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Extension;
 use SilverStripe\View\Requirements;
-use XD\BetterIcons\BetterIcons;
+use XD\BetterMenu\BetterMenu;
 
 /**
  * Applies the configured left-menu icons (by overriding each admin's `menu_icon_class`) and loads
- * the chosen Font Awesome stylesheet into the CMS. See {@link BetterIcons}.
+ * the chosen Font Awesome stylesheet into the CMS. See {@link BetterMenu}.
  *
  * @extends Extension<\SilverStripe\Admin\LeftAndMain>
  */
@@ -20,7 +20,7 @@ class LeftAndMainExtension extends Extension
      */
     protected function onInit(): void
     {
-        $map = BetterIcons::config()->get('menu_icons') ?: [];
+        $map = BetterMenu::config()->get('menu_icons') ?: [];
         foreach ($map as $class => $iconClass) {
             if (is_string($class) && is_string($iconClass) && $iconClass !== '') {
                 // Note: a class that sets a `menu_icon` image still wins over the class.
@@ -35,7 +35,7 @@ class LeftAndMainExtension extends Extension
      */
     protected function onAfterInit(): void
     {
-        $css = BetterIcons::fontAwesomeCss();
+        $css = BetterMenu::fontAwesomeCss();
         if ($css !== '') {
             Requirements::css($css);
         }
@@ -49,11 +49,11 @@ class LeftAndMainExtension extends Extension
             . 'display:flex!important;align-items:center!important;justify-content:flex-start!important;';
 
         // Optional global colour / opacity.
-        $color = preg_replace('/[^a-zA-Z0-9#(),.%\s\/-]/', '', trim((string) BetterIcons::config()->get('icon_color')));
+        $color = preg_replace('/[^a-zA-Z0-9#(),.%\s\/-]/', '', trim((string) BetterMenu::config()->get('icon_color')));
         if ($color !== '') {
             $decls .= 'color:' . $color . '!important;';
         }
-        $opacity = BetterIcons::config()->get('icon_opacity');
+        $opacity = BetterMenu::config()->get('icon_opacity');
         if ($opacity !== null) {
             $decls .= 'opacity:' . (float) $opacity . '!important;';
         }
@@ -65,14 +65,14 @@ class LeftAndMainExtension extends Extension
             // same x, not pushed further right).
             . '.cms-login-status__profile-link{padding-left:40px!important;}'
             . '.cms-login-status__profile-text{padding-left:0!important;}',
-            'better-icons-align'
+            'better-menu-align'
         );
 
         // The top profile + logout icons are hardcoded in the login-status template (font-icon-*),
         // not menu-icon-classes — swap them for the configured Font Awesome classes client-side.
         $swaps = array_filter([
-            '.cms-login-status__profile-icon' => trim((string) BetterIcons::config()->get('profile_icon')),
-            '.cms-login-status__logout-link .font-icon-logout' => trim((string) BetterIcons::config()->get('logout_icon')),
+            '.cms-login-status__profile-icon' => trim((string) BetterMenu::config()->get('profile_icon')),
+            '.cms-login-status__logout-link .font-icon-logout' => trim((string) BetterMenu::config()->get('logout_icon')),
         ]);
         if ($swaps) {
             Requirements::customScript(
@@ -81,7 +81,7 @@ class LeftAndMainExtension extends Extension
                 . 'Array.prototype.slice.call(el.classList).forEach(function(x){if(x.indexOf("font-icon")===0)el.classList.remove(x);});'
                 . 'm[sel].split(/\\s+/).forEach(function(x){if(x)el.classList.add(x);});});}'
                 . 'if(document.readyState!=="loading"){a();}else{document.addEventListener("DOMContentLoaded",a);}})();',
-                'better-icons-swap'
+                'better-menu-swap'
             );
         }
     }

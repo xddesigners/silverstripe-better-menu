@@ -1,22 +1,22 @@
 <?php
 
-namespace XD\BetterIcons;
+namespace XD\BetterMenu;
 
 use SilverStripe\Core\Config\Configurable;
 
 /**
- * Options for better-icons — replaces the CMS left main-menu icons with Font Awesome ones.
+ * Options for better-menu — replaces the CMS left main-menu icons with Font Awesome ones.
  *
- * Configure in YAML (e.g. `app/_config/better-icons.yml`):
+ * Configure in YAML (e.g. `app/_config/better-menu.yml`):
  *
- *     XD\BetterIcons\BetterIcons:
+ *     XD\BetterMenu\BetterMenu:
  *       menu_icons:
  *         'App\Admin\ProductAdmin': 'fa-solid fa-box'
  *       # Font Awesome is on by default; disable it, or point at your Pro kit:
  *       # include_fontawesome_free: false
  *       # fontawesome_css: 'https://kit.fontawesome.com/XXXX.css'
  */
-class BetterIcons
+class BetterMenu
 {
     use Configurable;
 

@@ -1,7 +1,8 @@
-# Silverstripe Better Icons
+# Silverstripe Better Menu
 
-Replace the Silverstripe CMS **left main-menu** icons (Pages, Files, Reports, Security, Archive,
-Settings, and any `ModelAdmin`) with nicer ones from **Font Awesome** — configured in YAML.
+Polish the Silverstripe CMS **left menu**: replace the section icons (Pages, Files, Reports,
+Security, Archive, Settings, and any `ModelAdmin`) with **Font Awesome** ones, set their colour
+and opacity, swap the profile/logout icons, and tidy the alignment — all configured in YAML.
 
 Out of the box it loads Font Awesome Free and applies a curated set of icons to the core CMS
 sections. Everything is overridable, and Font Awesome can be disabled or swapped for your Pro kit.
@@ -16,7 +17,7 @@ sections. Everything is overridable, and Font Awesome can be disabled or swapped
 ## Installation
 
 ```bash
-composer require xddesigners/silverstripe-better-icons
+composer require xddesigners/silverstripe-better-menu
 ```
 
 Run `dev/build?flush=1` once.
@@ -29,11 +30,11 @@ module loads Font Awesome into the CMS and overrides `menu_icon_class` for the c
 
 ## Configuring the icons
 
-Set icons per admin class in your project YAML (e.g. `app/_config/better-icons.yml`). The map is
+Set icons per admin class in your project YAML (e.g. `app/_config/better-menu.yml`). The map is
 deep-merged with the module's defaults, so you only list what you want to change:
 
 ```yaml
-XD\BetterIcons\BetterIcons:
+XD\BetterMenu\BetterMenu:
   menu_icons:
     'App\Admin\ProductAdmin': 'fa-solid fa-box'
     'App\Admin\OrderAdmin': 'fa-solid fa-receipt'
@@ -64,7 +65,7 @@ Font Awesome classes separately (swapped in client-side). The profile name is al
 with the menu titles.
 
 ```yaml
-XD\BetterIcons\BetterIcons:
+XD\BetterMenu\BetterMenu:
   profile_icon: 'fa-solid fa-circle-user'
   logout_icon: 'fa-solid fa-right-from-bracket'
 ```
@@ -75,7 +76,7 @@ The menu icons default to the SilverStripe dark-blue header colour at full opaci
 global colour and/or opacity:
 
 ```yaml
-XD\BetterIcons\BetterIcons:
+XD\BetterMenu\BetterMenu:
   icon_color: '#005a93'   # any CSS colour (default: SS dark blue); empty keeps the CMS default
   icon_opacity: 0.8       # 0–1 (default: 0.8)
 ```
@@ -85,7 +86,7 @@ XD\BetterIcons\BetterIcons:
 Font Awesome Free is loaded from cdnjs by default. Turn it off, or point at your own Pro kit/CSS:
 
 ```yaml
-XD\BetterIcons\BetterIcons:
+XD\BetterMenu\BetterMenu:
   # Disable all Font Awesome loading (use CMS font-icons only in your map):
   include_fontawesome_free: false
 
