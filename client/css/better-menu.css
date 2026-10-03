@@ -68,6 +68,8 @@
     gap: 0.5em;
     padding: 6px 16px 6px 20px !important;
     min-height: 0 !important;
+    /* Transparent so the band + recessed inset shadow show through (native rows are opaque). */
+    background: transparent !important;
 }
 
 /* Active child: a very subtle blue tint + brand-blue left accent (no bold). */
