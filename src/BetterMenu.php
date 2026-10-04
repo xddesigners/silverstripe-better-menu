@@ -62,6 +62,15 @@ class BetterMenu
     private static int $badge_max = 99;
 
     /**
+     * Seconds between live badge refreshes (client-side polling of the badge endpoint). `0`
+     * (default) disables polling — badges then refresh only when the CMS menu re-renders (on
+     * navigation). When > 0, the module's {@link \XD\BetterMenu\Control\BadgeController} is polled.
+     *
+     * @config
+     */
+    private static int $badge_poll_interval = 0;
+
+    /**
      * Replace the profile (user) icon at the top of the CMS menu with Font Awesome classes
      * (e.g. `fa-solid fa-circle-user`). Empty leaves the built-in icon. That icon isn't a
      * Tab/menu-icon-class, so it's swapped client-side.
@@ -119,6 +128,75 @@ class BetterMenu
      * @config
      */
     private static string $fontawesome_css = '';
+
+    /**
+     * Map of admin controller class => count callable, merged from the `menu` tree (`badge`) and
+     * the `menu_badges` map (tree wins). Shared by the menu renderer and the polling endpoint.
+     */
+    public static function badgeCallables(): array
+    {
+        $map = [];
+        foreach ((array) static::config()->get('menu') as $node) {
+            if (!is_array($node)) {
+                continue;
+            }
+            if (isset($node['group'])) {
+                foreach (($node['children'] ?? []) as $child) {
+                    if (is_array($child) && isset($child['section'], $child['badge'])) {
+                        $map[$child['section']] = $child['badge'];
+                    }
+                }
+            } elseif (isset($node['section'], $node['badge'])) {
+                $map[$node['section']] = $node['badge'];
+            }
+        }
+        foreach ((array) static::config()->get('menu_badges') as $class => $callable) {
+            if (is_string($class) && is_string($callable) && $callable !== '' && empty($map[$class])) {
+                $map[$class] = $callable;
+            }
+        }
+        return $map;
+    }
+
+    /**
+     * Formatted badge label for a count callable ('' when there's nothing to show), applying the
+     * `badge_max` cap (e.g. 120 → "99+").
+     */
+    public static function badgeLabel(string $callable): string
+    {
+        $n = static::badgeCount($callable);
+        if ($n <= 0) {
+            return '';
+        }
+        $max = (int) static::config()->get('badge_max');
+        return ($max > 0 && $n > $max) ? $max . '+' : (string) $n;
+    }
+
+    /**
+     * Resolve a count callable to an int. Accepts an int / numeric, or any Countable / SS_List
+     * (its count() is used). A non-callable or throwing callable resolves to 0.
+     */
+    public static function badgeCount(string $callable): int
+    {
+        if ($callable === '' || !is_callable($callable)) {
+            return 0;
+        }
+        try {
+            $result = call_user_func($callable);
+        } catch (\Throwable $e) {
+            return 0;
+        }
+        if (is_numeric($result)) {
+            return (int) $result;
+        }
+        if (is_object($result) && method_exists($result, 'count')) {
+            return (int) $result->count();
+        }
+        if (is_countable($result)) {
+            return count($result);
+        }
+        return 0;
+    }
 
     /**
      * Resolve the Font Awesome stylesheet URL to load, or '' for none.

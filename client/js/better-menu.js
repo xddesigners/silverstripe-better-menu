@@ -44,3 +44,61 @@
             .observe(document.documentElement, { childList: true, subtree: true });
     } catch (e) { /* no MutationObserver */ }
 })();
+
+/**
+ * Live badge polling (opt-in). Runs only when the server exposed `window.__betterMenuBadge`
+ * (i.e. BetterMenu.badge_poll_interval > 0). Fetches the badge endpoint on the interval and
+ * updates each menu row's count in place — adding the pill when a count rises from zero and
+ * removing it when it drops back — and pauses while the browser tab is hidden.
+ */
+(function () {
+    var cfg = window.__betterMenuBadge;
+    if (!cfg || !cfg.url || !(cfg.interval > 0)) {
+        return;
+    }
+
+    function apply(data) {
+        Object.keys(data).forEach(function (code) {
+            var li = document.getElementById('Menu-' + code);
+            if (!li) {
+                return;
+            }
+            var link = li.querySelector(':scope > a');
+            if (!link) {
+                return;
+            }
+            var badge = link.querySelector('.cms-menu__badge');
+            var label = data[code];
+            if (label) {
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'cms-menu__badge';
+                    link.appendChild(badge);
+                }
+                if (badge.textContent !== label) {
+                    badge.textContent = label;
+                }
+            } else if (badge) {
+                badge.parentNode.removeChild(badge);
+            }
+        });
+    }
+
+    function poll() {
+        if (document.hidden) {
+            return;
+        }
+        fetch(cfg.url, { credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (d) { if (d && typeof d === 'object') { apply(d); } })
+            .catch(function () { /* ignore transient errors */ });
+    }
+
+    setInterval(poll, cfg.interval * 1000);
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) {
+            poll();
+        }
+    });
+    poll();
+})();

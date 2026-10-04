@@ -10,6 +10,11 @@ SilverStripe\Admin\LeftAndMain:
   extensions:
     - XD\BetterMenu\Extension\LeftAndMainExtension
 
+# Live badge-count endpoint (only polled when badge_poll_interval > 0).
+SilverStripe\Control\Director:
+  rules:
+    'admin/better-menu//$Action': 'XD\BetterMenu\Control\BadgeController'
+
 # Works out of the box: the curated section icons + colour/opacity below apply with no grouping.
 # Grouping is opt-in — see the commented `menu` tree at the bottom.
 XD\BetterMenu\BetterMenu:

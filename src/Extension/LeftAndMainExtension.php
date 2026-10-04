@@ -3,6 +3,8 @@
 namespace XD\BetterMenu\Extension;
 
 use SilverStripe\Admin\LeftAndMain;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Extension;
 use SilverStripe\Model\ArrayData;
@@ -105,6 +107,16 @@ class LeftAndMainExtension extends Extension
 
         Requirements::customCSS($cssOut, 'better-menu-style');
 
+        // Live badge polling (opt-in): expose the endpoint + interval to the client JS.
+        $interval = (int) BetterMenu::config()->get('badge_poll_interval');
+        if ($interval > 0) {
+            $url = Controller::join_links(Director::baseURL(), 'admin/better-menu/badges');
+            Requirements::customScript(
+                'window.__betterMenuBadge=' . json_encode(['url' => $url, 'interval' => $interval]) . ';',
+                'better-menu-badge-cfg'
+            );
+        }
+
         // Swap the hardcoded profile + logout icons for the configured Font Awesome classes.
         $swaps = array_filter([
             '.cms-login-status__profile-icon' => trim((string) BetterMenu::config()->get('profile_icon')),
@@ -162,7 +174,7 @@ class LeftAndMainExtension extends Extension
         // Tag each live menu item with its group (or itself when ungrouped) and its badge.
         foreach ($items as $item) {
             $item->Badge = isset($badgeByCode[$item->Code])
-                ? $this->formatBadge($badgeByCode[$item->Code])
+                ? BetterMenu::badgeLabel((string) $badgeByCode[$item->Code])
                 : '';
             if (isset($itemsToGroup[$item->Code])) {
                 $item->Group = $itemsToGroup[$item->Code]['Group'];
@@ -303,45 +315,5 @@ class LeftAndMainExtension extends Extension
     private function safeColor(string $color): string
     {
         return (string) preg_replace('/[^a-zA-Z0-9#(),.%\s\/-]/', '', trim($color));
-    }
-
-    /**
-     * Format a section's badge: invoke its count callable and apply the `badge_max` cap. Returns
-     * '' when there's nothing to show (0, or an unresolvable/failing callable).
-     */
-    private function formatBadge($callable): string
-    {
-        $n = $this->badgeCount($callable);
-        if ($n <= 0) {
-            return '';
-        }
-        $max = (int) BetterMenu::config()->get('badge_max');
-        return ($max > 0 && $n > $max) ? $max . '+' : (string) $n;
-    }
-
-    /**
-     * Resolve a badge count callable to an int. Accepts an int / numeric, or any Countable /
-     * SS_List (its count() is used). Non-callable or throwing callables resolve to 0.
-     */
-    private function badgeCount($callable): int
-    {
-        if (!is_string($callable) || $callable === '' || !is_callable($callable)) {
-            return 0;
-        }
-        try {
-            $result = call_user_func($callable);
-        } catch (\Throwable $e) {
-            return 0;
-        }
-        if (is_numeric($result)) {
-            return (int) $result;
-        }
-        if (is_object($result) && method_exists($result, 'count')) {
-            return (int) $result->count();
-        }
-        if (is_countable($result)) {
-            return count($result);
-        }
-        return 0;
     }
 }
