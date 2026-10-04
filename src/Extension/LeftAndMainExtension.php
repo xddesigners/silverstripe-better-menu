@@ -65,6 +65,15 @@ class LeftAndMainExtension extends Extension
             . '.cms-login-status__profile-link{padding-left:40px!important;}'
             . '.cms-login-status__profile-text{padding-left:0!important;}';
 
+        // Count-badge colours (the badge structure lives in the stylesheet; colour follows config).
+        $badgeColor = $this->safeColor((string) BetterMenu::config()->get('badge_color'));
+        $badgeText = $this->safeColor((string) BetterMenu::config()->get('badge_text_color'));
+        $badgeDecls = ($badgeColor !== '' ? 'background-color:' . $badgeColor . ';' : '')
+            . ($badgeText !== '' ? 'color:' . $badgeText . ';' : '');
+        if ($badgeDecls !== '') {
+            $cssOut .= '.cms-menu__list .cms-menu__badge{' . $badgeDecls . '}';
+        }
+
         // Per-item colours / opacity, keyed by the menu item id (#Menu-<Code>). `color` is the base
         // colour the item's icon AND text both follow; `icon_color` / `text_color` override just one
         // of them. (Opacity applies to the icon.)
@@ -87,6 +96,10 @@ class LeftAndMainExtension extends Extension
             }
             if ($textColor !== '') {
                 $cssOut .= '#Menu-' . $code . ' .text{color:' . $textColor . '!important;}';
+            }
+            $badgeOverride = $this->safeColor((string) ($opts['badge_color'] ?? ''));
+            if ($badgeOverride !== '') {
+                $cssOut .= '#Menu-' . $code . ' .cms-menu__badge{background-color:' . $badgeOverride . '!important;}';
             }
         }
 
@@ -118,7 +131,16 @@ class LeftAndMainExtension extends Extension
     public function GroupedMainMenu(): ArrayList
     {
         $items = $this->getOwner()->MainMenu();
-        $groups = $this->collectBetterMenu()['groups'];
+        $model = $this->collectBetterMenu();
+        $groups = $model['groups'];
+
+        // Per-item badge counts, keyed by the dashed menu code (matches $item->Code).
+        $badgeByCode = [];
+        foreach ($model['items'] as $class => $opts) {
+            if (!empty($opts['badge'])) {
+                $badgeByCode[str_replace('\\', '-', (string) $class)] = $opts['badge'];
+            }
+        }
 
         // Map each configured menu-item Code -> group + sort metadata.
         $itemsToGroup = [];
@@ -137,8 +159,11 @@ class LeftAndMainExtension extends Extension
             }
         }
 
-        // Tag each live menu item with its group (or itself when ungrouped).
+        // Tag each live menu item with its group (or itself when ungrouped) and its badge.
         foreach ($items as $item) {
+            $item->Badge = isset($badgeByCode[$item->Code])
+                ? $this->formatBadge($badgeByCode[$item->Code])
+                : '';
             if (isset($itemsToGroup[$item->Code])) {
                 $item->Group = $itemsToGroup[$item->Code]['Group'];
                 $item->Priority = $itemsToGroup[$item->Code]['Priority'];
@@ -255,12 +280,19 @@ class LeftAndMainExtension extends Extension
             }
         }
 
+        // 4) Simple menu_badges map (class => count callable).
+        foreach ((array) BetterMenu::config()->get('menu_badges') as $class => $callable) {
+            if (is_string($class) && is_string($callable) && $callable !== '' && empty($items[$class]['badge'])) {
+                $items[$class]['badge'] = $callable;
+            }
+        }
+
         return ['groups' => $groups, 'items' => $items];
     }
 
     private function mergeItem(array $existing, array $opts): array
     {
-        foreach (['icon', 'color', 'icon_color', 'text_color', 'opacity'] as $k) {
+        foreach (['icon', 'color', 'icon_color', 'text_color', 'opacity', 'badge', 'badge_color'] as $k) {
             if (array_key_exists($k, $opts) && $opts[$k] !== null && $opts[$k] !== '') {
                 $existing[$k] = $opts[$k];
             }
@@ -271,5 +303,45 @@ class LeftAndMainExtension extends Extension
     private function safeColor(string $color): string
     {
         return (string) preg_replace('/[^a-zA-Z0-9#(),.%\s\/-]/', '', trim($color));
+    }
+
+    /**
+     * Format a section's badge: invoke its count callable and apply the `badge_max` cap. Returns
+     * '' when there's nothing to show (0, or an unresolvable/failing callable).
+     */
+    private function formatBadge($callable): string
+    {
+        $n = $this->badgeCount($callable);
+        if ($n <= 0) {
+            return '';
+        }
+        $max = (int) BetterMenu::config()->get('badge_max');
+        return ($max > 0 && $n > $max) ? $max . '+' : (string) $n;
+    }
+
+    /**
+     * Resolve a badge count callable to an int. Accepts an int / numeric, or any Countable /
+     * SS_List (its count() is used). Non-callable or throwing callables resolve to 0.
+     */
+    private function badgeCount($callable): int
+    {
+        if (!is_string($callable) || $callable === '' || !is_callable($callable)) {
+            return 0;
+        }
+        try {
+            $result = call_user_func($callable);
+        } catch (\Throwable $e) {
+            return 0;
+        }
+        if (is_numeric($result)) {
+            return (int) $result;
+        }
+        if (is_object($result) && method_exists($result, 'count')) {
+            return (int) $result->count();
+        }
+        if (is_countable($result)) {
+            return count($result);
+        }
+        return 0;
     }
 }

@@ -11,7 +11,7 @@
 					<% else %>
 						<span class="menu__icon font-icon-menu-modeladmin" aria-hidden="true"></span>
 					<% end_if %>
-					<span class="text">$Title</span>
+					<span class="text">$Title</span><% if $Badge %><span class="cms-menu__badge">$Badge</span><% end_if %>
 				</a>
 				<button type="button" class="cms-menu__group-toggle" aria-label="<%t XD\\BetterMenu.Toggle 'Toggle group' %>">
 					<span class="cms-menu__group-chevron"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></span>
@@ -27,7 +27,7 @@
 								<% else %>
 									<span class="menu__icon font-icon-menu-modeladmin" aria-hidden="true"></span>
 								<% end_if %>
-								<span class="text">$Title</span>
+								<span class="text">$Title</span><% if $Badge %><span class="cms-menu__badge">$Badge</span><% end_if %>
 							</a>
 						</li>
 					<% end_loop %>
@@ -43,7 +43,7 @@
 					<% else %>
 						<span class="menu__icon font-icon-menu-modeladmin" aria-hidden="true"></span>
 					<% end_if %>
-					<span class="text">$Title</span>
+					<span class="text">$Title</span><% if $Badge %><span class="cms-menu__badge">$Badge</span><% end_if %>
 				</a>
 			</li>
 		<% end_if %>

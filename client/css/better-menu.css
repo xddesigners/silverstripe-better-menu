@@ -124,6 +124,32 @@
     padding: 0 !important;
 }
 
+/* Count badge — a small pill pinned to the right of a menu row. Structure only; the colours are
+   emitted by the PHP extension (global `badge_color`/`badge_text_color`, with per-item overrides)
+   so they can follow config. The row needs a positioning context. */
+.cms-menu__list li {
+    position: relative;
+}
+
+.cms-menu__list .cms-menu__badge {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+}
+
 /* Collapsed (icon-only) sidebar: reveal children on hover of the group. */
 .cms-menu.collapsed .cms-menu__list .cms-menu__group:hover .cms-menu__group-items {
     display: block;

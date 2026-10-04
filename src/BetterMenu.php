@@ -30,6 +30,38 @@ class BetterMenu
     private static array $menu_icons = [];
 
     /**
+     * Map of admin controller class name => a callable (as a string) returning the count shown in
+     * that section's left-menu badge, e.g. `'App\Admin\OrderAdmin::newOrderCount'`. Invoked
+     * server-side on each menu render; `0` (or less) shows no badge. The callable may return an
+     * int, a numeric string, or any Countable / SS_List (its `count()` is used). Per-item badge
+     * colour goes in the `menu` tree (`badge_color`); the default colour is below.
+     *
+     * @config
+     */
+    private static array $menu_badges = [];
+
+    /**
+     * Default background colour for the count badges (any CSS colour).
+     *
+     * @config
+     */
+    private static string $badge_color = '#e74c3c';
+
+    /**
+     * Text colour for the count badges.
+     *
+     * @config
+     */
+    private static string $badge_text_color = '#ffffff';
+
+    /**
+     * Cap shown on a badge; counts above it render as "<max>+" (e.g. 99 → "99+"). 0 disables it.
+     *
+     * @config
+     */
+    private static int $badge_max = 99;
+
+    /**
      * Replace the profile (user) icon at the top of the CMS menu with Font Awesome classes
      * (e.g. `fa-solid fa-circle-user`). Empty leaves the built-in icon. That icon isn't a
      * Tab/menu-icon-class, so it's swapped client-side.
