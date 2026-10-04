@@ -52,10 +52,11 @@
  * removing it when it drops back — and pauses while the browser tab is hidden.
  */
 (function () {
-    var cfg = window.__betterMenuBadge;
-    if (!cfg || !cfg.url || !(cfg.interval > 0)) {
-        return;
-    }
+    function startBadgePolling() {
+        var cfg = window.__betterMenuBadge;
+        if (!cfg || !cfg.url || !(cfg.interval > 0)) {
+            return;
+        }
 
     function apply(data) {
         Object.keys(data).forEach(function (code) {
@@ -94,11 +95,18 @@
             .catch(function () { /* ignore transient errors */ });
     }
 
-    setInterval(poll, cfg.interval * 1000);
-    document.addEventListener('visibilitychange', function () {
-        if (!document.hidden) {
-            poll();
-        }
-    });
-    poll();
+        setInterval(poll, cfg.interval * 1000);
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) {
+                poll();
+            }
+        });
+        poll();
+    }
+
+    if (document.readyState !== 'loading') {
+        startBadgePolling();
+    } else {
+        document.addEventListener('DOMContentLoaded', startBadgePolling);
+    }
 })();
