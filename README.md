@@ -107,6 +107,53 @@ New projects should prefer the richer `menu` tree above (it adds per-item colour
 > **Template note:** grouping works by overriding the `LeftAndMain_MenuList.ss` include. If your
 > project (or another module) already overrides that same include, merge this module's version in.
 
+## Count badges
+
+Show a small count on a menu item — e.g. new orders, or unprocessed requests. Point a section at a
+callable that returns the number:
+
+![Menu items with count badges](docs/images/badges.png)
+
+```yaml
+XD\BetterMenu\BetterMenu:
+  menu_badges:
+    'App\Admin\OrderAdmin': 'App\Admin\OrderAdmin::newOrderCount'
+```
+
+The callable may return an int, a numeric string, or any `Countable` / `SS_List` (its `count()`
+is used). `0` — or a callable that can't be resolved — shows no badge.
+
+Colours and the cap are configurable; a per-item colour goes in the `menu` tree:
+
+```yaml
+XD\BetterMenu\BetterMenu:
+  badge_color: '#e74c3c'        # default pill background
+  badge_text_color: '#ffffff'   # default pill text
+  badge_max: 99                 # counts above show "99+" (0 disables the cap)
+  menu:
+    - section: 'App\Admin\OrderAdmin'
+      badge: 'App\Admin\OrderAdmin::newOrderCount'
+      badge_color: '#2980b9'    # per-item pill colour
+```
+
+By default the count is server-rendered and refreshes whenever the CMS menu re-renders — i.e. as
+you move around the admin.
+
+### Live updates (polling)
+
+To refresh the counts without navigating, set a poll interval in seconds:
+
+```yaml
+XD\BetterMenu\BetterMenu:
+  badge_poll_interval: 30   # 0 (default) = off
+```
+
+When enabled, the module polls a small JSON endpoint (`admin/better-menu/badges`) on that interval
+and updates the badges in place — adding a pill when a count rises from zero, removing it when it
+drops back — and pauses while the browser tab is hidden. The endpoint is read-only, requires a
+logged-in CMS user, and only returns counts for sections that user can access. It just re-runs your
+configured `menu_badges` callables server-side; nothing from the request is ever executed.
+
 ## Configuring the icons
 
 For the simple case — just icons, no grouping — set them per admin class. The map is deep-merged
