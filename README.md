@@ -84,6 +84,21 @@ XD\BetterMenu\BetterMenu:
 The `menu` tree layers on top of (and overrides) the simple `menu_icons` map below, so you can set
 icons globally and only reach for the tree when you want grouping or per-item colours.
 
+### Translating group names
+
+Group labels run through Silverstripe's i18n, so they follow the **CMS interface language** (the
+user's own language setting — not a Fluent content locale). The translation key is
+`XD\BetterMenu\Group.<Code>`, where `<Code>` is the group name with spaces replaced by underscores;
+the English fallback is the name from your config. Add translations in your project's lang files:
+
+```yaml
+# app/lang/nl.yml
+nl:
+  'XD\BetterMenu\Group':
+    Advanced: 'Geavanceerd'
+    Site_Tools: 'Sitebeheer'   # for a group named "Site Tools"
+```
+
 ### Migrating from grouped-cms-menu
 
 Better Menu also reads the legacy `LeftAndMain.menu_groups` format (from
